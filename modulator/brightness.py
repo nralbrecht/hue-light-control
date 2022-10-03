@@ -26,12 +26,11 @@ class HueBrightnessModulator:
         self.should_run = True
 
     def getNextBrightness(self):
-        global last_light_level
         light_level = self.sensor.getLightLevel()
 
-        if light_level == last_light_level:
+        if light_level == self.last_light_level:
             return False, None
-        last_light_level = light_level
+        self.last_light_level = light_level
 
         brightness_difference = TARGET_BRIGHTNESS - light_level
 
@@ -50,41 +49,44 @@ class HueBrightnessModulator:
             # Setup
             print("starting brightness control")
 
-            self.sensor.setPower(True)
             self.sensor.setLED(True)
 
             await asyncio.sleep(TIMESTEP * 2)
 
             # Core loop
-            self.light.setPower(True)
             self.light.setBrightness(INITIAL_BRIGHTNESS)
 
             while self.should_run:
                 battery = self.sensor.getBattery()
                 idle, brightness = self.getNextBrightness()
+                # print("self.getNextBrightness()", idle, brightness)
 
-                print("light:", self.sensor.getLightLevel(), "->", brightness, "/", TARGET_BRIGHTNESS, " (battery: " + str(battery) + ")")
 
                 if battery < BATTERY_WARN_THRESHOLD:
                     print("ALARM!111!11! Baterie is bei " + str(battery) + "%")
 
                 if brightness:
+                    # if self.sensor.getLightLevel() < TARGET_BRIGHTNESS * 2:
+                    #     if self.light.getPower():
+                    #         self.light.setBrightness(0)
+                    #         self.light.setPower(False)
+                    # else:
+                    print("sensor:", self.sensor.getLightLevel(), "next_brightness:", brightness, "last_brightness:", self.light.getBrightness(), "target:", TARGET_BRIGHTNESS, "battery:", str(battery))
+
                     self.light.setBrightness(brightness)
+                    if not self.light.getPower():
+                        self.light.setPower(True)
+
+                    # print("1 waiting for", TIMESTEP)
                     await asyncio.sleep(TIMESTEP)
 
-                # try:
-                #     if brightness:
-                #         self.light.setBrightness(brightness)
-                #         TARGET_BRIGHTNESS = int(inputimeout(prompt='Input new TARGET_BRIGHTNESS: ', timeout=TIMESTEP))
-                #         await asyncio.sleep(TIMESTEP)
+                elif not idle:
+                    # print("2 waiting for", TIMESTEP)
+                    await asyncio.sleep(TIMESTEP)
 
-                #     elif not idle:
-                #         TARGET_BRIGHTNESS = int(inputimeout(prompt='Input new TARGET_BRIGHTNESS: ', timeout=TIMESTEP))
-                #     else:
-                #         TARGET_BRIGHTNESS = int(inputimeout(prompt='Input new TARGET_BRIGHTNESS: ', timeout=TIMESTEP_IDLE))
-                #         time.sleep(TIMESTEP_IDLE)
-                # except TimeoutOccurred:
-                #     pass
+                else:
+                    # print("3 waiting for", TIMESTEP_IDLE)
+                    await asyncio.sleep(TIMESTEP_IDLE)
 
         except KeyboardInterrupt:
             pass

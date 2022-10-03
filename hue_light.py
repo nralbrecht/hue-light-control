@@ -4,10 +4,12 @@ from phue import Bridge
 class HueLight:
     def __init__(self, bridge: Bridge, name: str) -> None:
         self.bridge = bridge
-        self.light_id = int(bridge.get_sensor_id_by_name(name))
-        self.light = bridge.get_sensor_objects("id")[self.light_id]
+        self.light_id = int(bridge.get_light_id_by_name(name))
+        self.light = bridge.get_light_objects("id")[self.light_id]
 
 
+    def getPower(self):
+        return self.light.on
     def setPower(self, enable: bool):
         self.light.on = enable
 

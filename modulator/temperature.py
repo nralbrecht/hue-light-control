@@ -36,7 +36,6 @@ class HueTemperatureModulator:
             await asyncio.sleep(TIMESTEP_INITIAL_COLOR)
 
             # Core loop
-            self.light.setPower(True)
             self.light.setColor(INITIAL_COLOR)
 
             while self.should_run:
@@ -46,10 +45,13 @@ class HueTemperatureModulator:
 
                 print("color:", self.light.getColor(), "->", color, colorOriginal)
 
-                if color:
-                    self.light.setColor(color)
+                if self.light.getPower():
+                    if color:
+                        self.light.setColor(color)
+                    else:
+                        print("color not defined")
                 else:
-                    print("color not defined")
+                    print("cant change color! the lamp is off")
 
         except KeyboardInterrupt:
             pass

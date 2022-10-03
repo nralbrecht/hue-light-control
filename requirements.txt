@@ -3,4 +3,4 @@
 phue
 Pillow
 numpy
-colour
+colour-science

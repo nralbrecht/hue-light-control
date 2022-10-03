@@ -6,32 +6,15 @@ from PIL import ImageGrab
 class MonitorColorHelper:
     def get_temperature(self):
         self._update_screen_shot()
-        self._update_average_color()
         self._update_color_temperature()
 
         return self.color_temperature
 
     def _update_screen_shot(self):
-        self.image = ImageGrab.grab()
-        self.image = self.image.resize((10, 10))
-
-    def _update_average_color(self):
-        width, height = self.image.size
-
-        r_total = 0
-        g_total = 0
-        b_total = 0
-
-        count = 0
-        for x in range(0, width):
-            for y in range(0, height):
-                r, g, b = self.image.getpixel((x,y))
-                r_total += r
-                g_total += g
-                b_total += b
-                count += 1
-
-        self.average_color = (r_total/count, g_total/count, b_total/count)
+        image = ImageGrab.grab()
+        image = image.resize((1, 1))
+        # image = image.crop((left, upper, right, lower))
+        self.average_color = image.getpixel((0,0))
 
     def _update_color_temperature(self):
         # Assuming sRGB encoded colour values.
