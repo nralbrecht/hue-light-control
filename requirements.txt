@@ -1,0 +1,6 @@
+# minimalist requirements
+-i https://pypi.org/simple
+phue
+Pillow
+numpy
+colour

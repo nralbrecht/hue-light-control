@@ -1,0 +1,25 @@
+{
+    "bridge_ip": "192.168.178.49",
+    "battery_warn_threshold": 10,
+    "brightness": {
+        "timestep": 1,
+        "timestep_idle": 60,
+
+        "target_brightness": 12000,
+        "brightness_tolerance": 300,
+
+        "min_brightness": 0,
+        "max_brightness": 254,
+        "initial_brightness": 127,
+
+        "battery_warn_threshold": 10
+    },
+    "color": {
+        "timestep": 0.1,
+        "timestep_initial": 1,
+
+        "initial_color": 2000,
+        "min_color": 2000,
+        "max_color": 6500
+    }
+}
